@@ -14,6 +14,7 @@ public class MainActivity extends Activity {
     private static final String TAGW = "JCJ-W";
 
     private WebView mWebView;
+    private boolean mPageLoaded = false;
 
     static {
         Log.i(TAGA, "loading jcj-lib...");
@@ -46,8 +47,6 @@ public class MainActivity extends Activity {
         mWebView.addJavascriptInterface(jsInterface, "JSToJava");
         mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         mWebView.loadUrl("file:///android_asset/page.html");
-
-        mWebView.loadUrl("javascript: var result = window.jsAdd(22, 33); window.JSToJava.jsReply(result)");
     }
 
     public final class JSInterface {
@@ -58,13 +57,13 @@ public class MainActivity extends Activity {
         }
 
         @android.webkit.JavascriptInterface
-        public void someJavaFunction(String message){
-            Log.i(TAGW, message);
+        public void jsCall(String message){
+            Log.i(TAGW, "JS to Java: jsCall  = <" + message + ">");
         }
 
         @android.webkit.JavascriptInterface
         public void jsReply(String message){
-            Log.i(TAGW, message);
+            Log.i(TAGW, "JS to Java: jsReply = <" + message + ">");
         }
     }
 
@@ -73,6 +72,15 @@ public class MainActivity extends Activity {
             Log.i(TAGW, message);
             result.confirm();
             return true;
+        }
+        public void onProgressChanged(WebView view, int progress) {
+            Log.v(TAGA, "progress: " + progress);
+            if (progress == 100) {
+                if(!mPageLoaded) {
+                    mPageLoaded = true;
+                    mWebView.loadUrl("javascript: var result = window.jsAdd(22, 33); window.JSToJava.jsReply(result)");
+                }
+            }
         }
     }
 

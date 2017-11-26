@@ -1,10 +1,10 @@
 
 function doOnClick() {
-    window.JSToJava.someJavaFunction("JSToJava: JS is calling Java")
-    alert("alert: JS is calling Java");
+    window.JSToJava.jsCall("JS says hello to Java")
 }
 
 function jsAdd(a, b) {
+    alert("Java to JS: jsAdd called");
     var sum = a + b;
     return sum;
 }
