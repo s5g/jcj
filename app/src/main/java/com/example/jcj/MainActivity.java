@@ -3,18 +3,20 @@ package com.example.jcj;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
 
-    private static final String TAG = "JCJ-A";
+    private static final String TAGA = "JCJ-A";
+    private static final String TAGW = "JCJ-W";
 
     private WebView mWebView;
 
     static {
-        Log.i(TAG, "loading jcj-lib...");
+        Log.i(TAGA, "loading jcj-lib...");
         System.loadLibrary("jcj-lib");
     }
 
@@ -29,18 +31,42 @@ public class MainActivity extends Activity {
         float a = 2;
         float b = 3;
         float sum = add(2, 3);
-        Log.i(TAG, String.format("%f + %f = %f", a, b, sum));
+        Log.i(TAGA, String.format("%f + %f = %f", a, b, sum));
     }
 
     private void initializeWebView(){
+        JavaScriptInterface jsInterface = new JavaScriptInterface(this);
+
         mWebView = findViewById(R.id.main_webview);
-        mWebView.setWebChromeClient(new WebChromeClient());
+        mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.clearCache(true);
         mWebView.clearHistory();
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.addJavascriptInterface(jsInterface, "JSInterface");
         mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         mWebView.loadUrl("file:///android_asset/page.html");
+    }
+
+    public final class JavaScriptInterface {
+        private Activity activity;
+
+        public JavaScriptInterface(Activity activity) {
+            this.activity = activity;
+        }
+
+        @android.webkit.JavascriptInterface
+        public void someJavaFunction(String message){
+            Log.i(TAGW, message);
+        }
+    }
+
+    final class MyWebChromeClient extends WebChromeClient {
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            Log.i(TAGW, message);
+            result.confirm();
+            return true;
+        }
     }
 
     /**
