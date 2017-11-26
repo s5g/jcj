@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
         mWebView.clearHistory();
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        mWebView.loadUrl("file:///android_asset/holder.html");
+        mWebView.loadUrl("file:///android_asset/page.html");
     }
 
     /**
