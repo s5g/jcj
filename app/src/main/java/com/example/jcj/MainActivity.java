@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
     }
 
     private void initializeWebView(){
-        JavaScriptInterface jsInterface = new JavaScriptInterface(this);
+        JSInterface jsInterface = new JSInterface(this);
 
         mWebView = findViewById(R.id.main_webview);
         mWebView.setWebChromeClient(new MyWebChromeClient());
@@ -43,20 +43,27 @@ public class MainActivity extends Activity {
         mWebView.clearCache(true);
         mWebView.clearHistory();
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.addJavascriptInterface(jsInterface, "JSInterface");
+        mWebView.addJavascriptInterface(jsInterface, "JSToJava");
         mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         mWebView.loadUrl("file:///android_asset/page.html");
+
+        mWebView.loadUrl("javascript: var result = window.jsAdd(22, 33); window.JSToJava.jsReply(result)");
     }
 
-    public final class JavaScriptInterface {
+    public final class JSInterface {
         private Activity activity;
 
-        public JavaScriptInterface(Activity activity) {
+        public JSInterface(Activity activity) {
             this.activity = activity;
         }
 
         @android.webkit.JavascriptInterface
         public void someJavaFunction(String message){
+            Log.i(TAGW, message);
+        }
+
+        @android.webkit.JavascriptInterface
+        public void jsReply(String message){
             Log.i(TAGW, message);
         }
     }
